@@ -5,11 +5,11 @@ from sklearn.metrics import precision_recall_fscore_support
 from tensorflow.keras import regularizers
 
 kFold = 10
-layerSize = 30
+layerSize = 15
 dropout = 0.05
 l2 = 0.0001
 
-X = np.load('X_binary_com.npy')
+X = np.load('X_binary_com.npy')[:, [0,1,3]] # best performing features
 Y = np.load('Y_binary_com.npy')
 
 ids = np.arange(len(X))
@@ -43,12 +43,8 @@ for _ in range(kFold):
     maes.append(train_history.history['val_binary_accuracy'][-1])
 
     yHat = model.predict(X[test])
-    # classification
     predHat = np.array(np.round(yHat[:,0], 0), dtype=int)
     pred = Y[test]
-    # regression
-    #predHat = np.array(yHat[:,1] > yHat[:,0], dtype=int)
-    #pred = np.array(Y[test,1] > Y[test,0], dtype=int)
 
     prec, rec, f1, supp = precision_recall_fscore_support(pred, predHat)
     precs.append(prec)
